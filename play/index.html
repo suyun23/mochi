@@ -17,6 +17,8 @@ h1{font-size:clamp(28px,7vw,38px);letter-spacing:-.05em;line-height:1.18;margin:
 .deck{border:1px solid var(--line);background:var(--paper);border-radius:17px;padding:14px 12px;text-align:left;color:var(--ink);min-height:90px;cursor:pointer;transition:.18s}
 .deck strong{display:block;font-size:14px;margin-bottom:6px}.deck span{font-size:11px;color:var(--muted);line-height:1.5}.deck.active{border-color:var(--rose);background:#fff5f2;box-shadow:inset 0 0 0 1px var(--rose)}
 .turns{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.turn{flex:1 1 calc(50% - 4px);border:1px solid var(--line);border-radius:13px;background:#fffdf9;color:var(--muted);padding:11px 8px;font-size:12px;cursor:pointer}.turn.active{background:#f0dedb;border-color:#dfb8b3;color:#815d5d;font-weight:700}
+.editor{margin-top:16px;background:#fffdf9;border:1px solid var(--line);border-radius:20px;padding:15px}
+.editor-grid{display:grid;gap:9px}.editor input,.editor textarea,.editor select{width:100%;border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px;color:var(--ink);font:inherit;font-size:12px;outline:none}.editor textarea{min-height:76px;resize:vertical}.editor .btn{width:100%;margin-top:9px}.custom-list{display:grid;gap:6px;margin-top:10px}.custom-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);padding:7px 9px;background:#f8f1ed;border-radius:9px}.custom-row button{margin-left:auto;border:0;background:none;color:#a66b70;font-size:11px}
 .draw-area{margin-top:18px;background:var(--paper);border:1px solid #fff;border-radius:26px;padding:24px 20px;min-height:228px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .draw-area:before{content:"";position:absolute;width:190px;height:190px;border:1px solid #f1e4dd;border-radius:50%;top:-120px;right:-70px}
 .card-tag{font-size:10px;letter-spacing:.16em;color:var(--rose);margin-bottom:14px}.card-title{font-size:23px;font-weight:750;letter-spacing:-.03em;margin-bottom:12px}.card-body{font-size:14px;line-height:1.85;max-width:390px;color:#695b52}.placeholder{color:#b3a59b;font-size:13px;line-height:1.8}
@@ -46,6 +48,19 @@ footer{font-size:10px;line-height:1.8;color:#a19389;text-align:center;margin-top
       <button class="turn" data-turn="一起抽">一起抽</button>
       <button class="turn" data-turn="安安主动出招">✦ 安安主动出招</button>
     </div>
+  </section>
+  <section class="editor">
+    <p class="section-label">02 / 写一张我们的专属卡</p>
+    <div class="editor-grid">
+      <select id="customDeck" aria-label="自定义卡组">
+        <option value="daily">甜甜日常</option><option value="spark">心动挑战</option><option value="mischief">夫妻互坑</option><option value="memory">记忆盲盒</option>
+      </select>
+      <input id="customTitle" maxlength="24" placeholder="卡片标题，例如：安安今天的秘密">
+      <textarea id="customBody" maxlength="220" placeholder="写下这张卡要做的事……"></textarea>
+    </div>
+    <button class="btn secondary" id="addCardBtn">＋ 添加到我的卡组</button>
+    <div class="custom-list" id="customList"></div>
+    <p class="hint" style="margin-bottom:0">自定义卡只保存在当前浏览器。换设备或清除浏览器数据前记得备份。</p>
   </section>
   <section class="draw-area" aria-live="polite" id="drawArea">
     <div class="placeholder">卡牌还在盒子里打盹。<br>点下面的按钮，把今天的随机事件叫醒。</div>
@@ -116,6 +131,19 @@ const ananMoves={
  ]
 };
 let deck="daily",turn="月月先手",current=null,history=[];
+const customCards=(()=>{try{return JSON.parse(localStorage.getItem("moonAnAnCustomCards")||"[]")}catch(e){return []}})();
+function saveCustom(){localStorage.setItem("moonAnAnCustomCards",JSON.stringify(customCards));renderCustom();}
+function renderCustom(){
+ $("#customList").innerHTML=customCards.length?customCards.map((c,i)=>'<div class="custom-row"><span>'+c.title.replace(/[&<>"]/g,'')+'</span><small>'+deckNames[c.deck]+'</small><button data-remove="'+i+'">删除</button></div>').join(""):'<div class="hint">还没有自定义卡，先写一张试试。</div>';
+}
+$("#customList").addEventListener("click",e=>{const b=e.target.closest("[data-remove]");if(!b)return;customCards.splice(Number(b.dataset.remove),1);saveCustom();});
+$("#addCardBtn").addEventListener("click",()=>{
+ const title=$("#customTitle").value.trim(),body=$("#customBody").value.trim(),target=$("#customDeck").value;
+ if(!title||!body){$("#hint").textContent="标题和任务内容都要写哦。";return;}
+ customCards.push({deck:target,title,body});saveCustom();$("#customTitle").value="";$("#customBody").value="";
+ $("#hint").textContent="专属卡已加入："+title+"。抽对应卡组就有机会抽到它啦。";
+});
+renderCustom();
 const $=s=>document.querySelector(s);
 $("#decks").addEventListener("click",e=>{const b=e.target.closest("[data-deck]");if(!b)return;deck=b.dataset.deck;document.querySelectorAll(".deck").forEach(x=>x.classList.toggle("active",x===b));});
 document.querySelector(".turns").addEventListener("click",e=>{const b=e.target.closest("[data-turn]");if(!b)return;turn=b.dataset.turn;document.querySelectorAll(".turn").forEach(x=>x.classList.toggle("active",x===b));});
