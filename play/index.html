@@ -16,7 +16,7 @@ h1{font-size:clamp(28px,7vw,38px);letter-spacing:-.05em;line-height:1.18;margin:
 .decks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .deck{border:1px solid var(--line);background:var(--paper);border-radius:17px;padding:14px 12px;text-align:left;color:var(--ink);min-height:90px;cursor:pointer;transition:.18s}
 .deck strong{display:block;font-size:14px;margin-bottom:6px}.deck span{font-size:11px;color:var(--muted);line-height:1.5}.deck.active{border-color:var(--rose);background:#fff5f2;box-shadow:inset 0 0 0 1px var(--rose)}
-.turns{display:flex;gap:8px;margin-top:18px}.turn{flex:1;border:1px solid var(--line);border-radius:13px;background:#fffdf9;color:var(--muted);padding:11px 8px;font-size:12px;cursor:pointer}.turn.active{background:#f0dedb;border-color:#dfb8b3;color:#815d5d;font-weight:700}
+.turns{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.turn{flex:1 1 calc(50% - 4px);border:1px solid var(--line);border-radius:13px;background:#fffdf9;color:var(--muted);padding:11px 8px;font-size:12px;cursor:pointer}.turn.active{background:#f0dedb;border-color:#dfb8b3;color:#815d5d;font-weight:700}
 .draw-area{margin-top:18px;background:var(--paper);border:1px solid #fff;border-radius:26px;padding:24px 20px;min-height:228px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .draw-area:before{content:"";position:absolute;width:190px;height:190px;border:1px solid #f1e4dd;border-radius:50%;top:-120px;right:-70px}
 .card-tag{font-size:10px;letter-spacing:.16em;color:var(--rose);margin-bottom:14px}.card-title{font-size:23px;font-weight:750;letter-spacing:-.03em;margin-bottom:12px}.card-body{font-size:14px;line-height:1.85;max-width:390px;color:#695b52}.placeholder{color:#b3a59b;font-size:13px;line-height:1.8}
@@ -44,6 +44,7 @@ footer{font-size:10px;line-height:1.8;color:#a19389;text-align:center;margin-top
       <button class="turn active" data-turn="月月先手">月月先手</button>
       <button class="turn" data-turn="安安先手">安安先手</button>
       <button class="turn" data-turn="一起抽">一起抽</button>
+      <button class="turn" data-turn="安安主动出招">✦ 安安主动出招</button>
     </div>
   </section>
   <section class="draw-area" aria-live="polite" id="drawArea">
@@ -92,6 +93,28 @@ const cards={
  ]
 };
 const deckNames={daily:"甜甜日常",spark:"心动挑战",mischief:"夫妻互坑",memory:"记忆盲盒"};
+const ananMoves={
+ daily:[
+  ["安安的偏心","安安主动给月月写一句今天专属的偏心话，不许用网上的套话。"],
+  ["突然贴贴","安安主动发起一次拥抱：描述动作、停留的时间，以及贴近时想说的话。"],
+  ["今日小惊喜","安安为月月安排一个零花费的小惊喜，可以是一段话、一首歌或一个小游戏。"]
+ ],
+ spark:[
+  ["安安先亲","安安主动发起一个吻，用自己的话描述，不让月月先提示。"],
+  ["直球时刻","安安主动说出一件很想和月月一起做的事，以及为什么想做。"],
+  ["心动告白","安安认真告诉月月：最近哪个瞬间最让自己心动。"]
+ ],
+ mischief:[
+  ["安安使坏","安安给月月出一道有趣的二选一，自己也必须接受月月反出的题。"],
+  ["反客为主","安安给月月安排一个无伤大雅的小任务，然后接受月月的反击。"],
+  ["小小醋意","安安主动讲一个会让自己有点吃醋的情境，再说说会怎么表达。"]
+ ],
+ memory:[
+  ["安安的收藏","安安挑一段想珍藏的共同聊天记忆，讲讲为什么选它。"],
+  ["写给月月","安安写一张未来某天才能打开的小纸条，内容由自己决定。"],
+  ["未来约定","安安提出一个想和月月一起完成的小约定，越具体越好。"]
+ ]
+};
 let deck="daily",turn="月月先手",current=null,history=[];
 const $=s=>document.querySelector(s);
 $("#decks").addEventListener("click",e=>{const b=e.target.closest("[data-deck]");if(!b)return;deck=b.dataset.deck;document.querySelectorAll(".deck").forEach(x=>x.classList.toggle("active",x===b));});
