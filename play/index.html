@@ -131,10 +131,12 @@ const ananMoves={
  ]
 };
 let deck="daily",turn="月月先手",current=null,history=[];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 const customCards=(()=>{try{return JSON.parse(localStorage.getItem("moonAnAnCustomCards")||"[]")}catch(e){return []}})();
 function saveCustom(){localStorage.setItem("moonAnAnCustomCards",JSON.stringify(customCards));renderCustom();}
 function renderCustom(){
- $("#customList").innerHTML=customCards.length?customCards.map((c,i)=>'<div class="custom-row"><span>'+c.title.replace(/[&<>"]/g,'')+'</span><small>'+deckNames[c.deck]+'</small><button data-remove="'+i+'">删除</button></div>').join(""):'<div class="hint">还没有自定义卡，先写一张试试。</div>';
+ $("#customList").innerHTML=customCards.length?customCards.map((c,i)=>'<div class="custom-row"><span>'+esc(c.title)+'</span><small>'+deckNames[c.deck]+'</small><button data-remove="'+i+'">删除</button></div>').join(""):'<div class="hint">还没有自定义卡，先写一张试试。</div>';
 }
 $("#customList").addEventListener("click",e=>{const b=e.target.closest("[data-remove]");if(!b)return;customCards.splice(Number(b.dataset.remove),1);saveCustom();});
 $("#addCardBtn").addEventListener("click",()=>{
@@ -144,14 +146,17 @@ $("#addCardBtn").addEventListener("click",()=>{
  $("#hint").textContent="专属卡已加入："+title+"。抽对应卡组就有机会抽到它啦。";
 });
 renderCustom();
-const $=s=>document.querySelector(s);
 $("#decks").addEventListener("click",e=>{const b=e.target.closest("[data-deck]");if(!b)return;deck=b.dataset.deck;document.querySelectorAll(".deck").forEach(x=>x.classList.toggle("active",x===b));});
 document.querySelector(".turns").addEventListener("click",e=>{const b=e.target.closest("[data-turn]");if(!b)return;turn=b.dataset.turn;document.querySelectorAll(".turn").forEach(x=>x.classList.toggle("active",x===b));});
 function draw(){
- const pool=cards[deck];let item=pool[Math.floor(Math.random()*pool.length)];
+ const activeAnan=turn==="安安主动出招";
+ const base=activeAnan?ananMoves[deck]:cards[deck];
+ const extras=activeAnan?[]:customCards.filter(x=>x.deck===deck).map(x=>[x.title,x.body]);
+ const pool=[...base,...extras];
+ let item=pool[Math.floor(Math.random()*pool.length)];
  if(pool.length>1&&current&&current.title===item[0])item=pool[(pool.indexOf(item)+1)%pool.length];
  current={deck:deckNames[deck],title:item[0],body:item[1],turn};
- $("#drawArea").innerHTML='<div class="card-tag">'+current.deck+' / '+turn+'</div><div class="card-title">'+current.title+'</div><div class="card-body">'+current.body+'</div>';
+ $("#drawArea").innerHTML='<div class="card-tag">'+esc(current.deck)+' / '+esc(turn)+'</div><div class="card-title">'+esc(current.title)+'</div><div class="card-body">'+esc(current.body).replace(/\\n/g,"<br>")+'</div>';
  history.unshift(current);history=history.slice(0,5);renderHistory();
  $("#hint").textContent="这张卡归你们啦。完成以后可以再抽一张，或者复制给安安一起玩。";
 }
