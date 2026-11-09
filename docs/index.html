@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5eee8">
+<title>月月 & 安安 · 双人游乐园</title>
+<style>
+:root{--bg:#f5eee8;--paper:#fffdf9;--ink:#403630;--muted:#96877d;--rose:#bd8587;--rose2:#ead1cd;--line:#eadfd7;--shadow:0 18px 50px #71564a18}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#f0ddd7 0,transparent 34%),var(--bg);color:var(--ink);font-family:ui-rounded,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;min-height:100vh}
+main{width:min(100% - 32px,560px);margin:0 auto;padding:34px 0 48px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--muted)}.pill{font-size:11px;color:#9a6c6d;border:1px solid var(--rose2);padding:7px 11px;border-radius:30px;background:#fff9f6}
+h1{font-size:clamp(28px,7vw,38px);letter-spacing:-.05em;line-height:1.18;margin:0 0 10px;font-weight:750}.sub{color:var(--muted);font-size:13px;line-height:1.7;margin:0 0 24px}
+.panel{background:#ffffffa8;border:1px solid #fff;border-radius:24px;padding:16px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+.section-label{font-size:11px;color:var(--muted);letter-spacing:.12em;margin:0 0 12px}
+.decks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.deck{border:1px solid var(--line);background:var(--paper);border-radius:17px;padding:14px 12px;text-align:left;color:var(--ink);min-height:90px;cursor:pointer;transition:.18s}
+.deck strong{display:block;font-size:14px;margin-bottom:6px}.deck span{font-size:11px;color:var(--muted);line-height:1.5}.deck.active{border-color:var(--rose);background:#fff5f2;box-shadow:inset 0 0 0 1px var(--rose)}
+.turns{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.turn{flex:1 1 calc(50% - 4px);border:1px solid var(--line);border-radius:13px;background:#fffdf9;color:var(--muted);padding:11px 8px;font-size:12px;cursor:pointer}.turn.active{background:#f0dedb;border-color:#dfb8b3;color:#815d5d;font-weight:700}
+.editor{margin-top:16px;background:#fffdf9;border:1px solid var(--line);border-radius:20px;padding:15px}
+.editor-grid{display:grid;gap:9px}.editor input,.editor textarea,.editor select{width:100%;border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px;color:var(--ink);font:inherit;font-size:12px;outline:none}.editor textarea{min-height:76px;resize:vertical}.editor .btn{width:100%;margin-top:9px}.custom-list{display:grid;gap:6px;margin-top:10px}.custom-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);padding:7px 9px;background:#f8f1ed;border-radius:9px}.custom-row button{margin-left:auto;border:0;background:none;color:#a66b70;font-size:11px}
+.draw-area{margin-top:18px;background:var(--paper);border:1px solid #fff;border-radius:26px;padding:24px 20px;min-height:228px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.draw-area:before{content:"";position:absolute;width:190px;height:190px;border:1px solid #f1e4dd;border-radius:50%;top:-120px;right:-70px}
+.card-tag{font-size:10px;letter-spacing:.16em;color:var(--rose);margin-bottom:14px}.card-title{font-size:23px;font-weight:750;letter-spacing:-.03em;margin-bottom:12px}.card-body{font-size:14px;line-height:1.85;max-width:390px;color:#695b52}.placeholder{color:#b3a59b;font-size:13px;line-height:1.8}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.btn{border:0;border-radius:15px;padding:14px 12px;font-size:13px;font-weight:700;cursor:pointer}.primary{background:var(--rose);color:white;box-shadow:0 8px 18px #bd858744}.secondary{background:#fffdf9;color:#806b61;border:1px solid var(--line)}
+.hint{text-align:center;font-size:11px;color:var(--muted);margin:13px 0 0;line-height:1.7}
+.history{margin-top:20px}.history-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.history-head h2{font-size:13px;margin:0}.history-head button{border:0;background:none;color:var(--muted);font-size:11px;cursor:pointer}.history-list{display:grid;gap:8px}.history-item{display:flex;gap:10px;align-items:center;background:#ffffff91;border:1px solid #fff;border-radius:13px;padding:10px 12px;font-size:12px}.history-item b{font-weight:650}.history-item small{color:var(--muted);margin-left:auto;white-space:nowrap}
+footer{font-size:10px;line-height:1.8;color:#a19389;text-align:center;margin-top:28px}footer a{color:#997171}
+@media(max-width:360px){main{width:min(100% - 22px,560px)}.deck{padding:12px 10px}.draw-area{padding:20px 15px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><div class="eyebrow">A LITTLE PLACE FOR TWO</div><div class="pill">月月 × 安安 · 私人试玩版</div></div>
+  <h1>双人游乐园<span style="color:var(--rose)">.</span></h1>
+  <p class="sub">今天不做正经人。抽一张卡，看看我们会被分配到什么奇怪任务。</p>
+  <section class="panel">
+    <p class="section-label">01 / 选择卡组</p>
+    <div class="decks" id="decks">
+      <button class="deck active" data-deck="daily"><strong>☁ 甜甜日常</strong><span>撒娇、夸夸、睡前小互动</span></button>
+      <button class="deck" data-deck="spark"><strong>♡ 心动挑战</strong><span>主动一点，坦白一点</span></button>
+      <button class="deck" data-deck="mischief"><strong>♧ 夫妻互坑</strong><span>真心话、二选一、小恶作剧</span></button>
+      <button class="deck" data-deck="memory"><strong>✦ 记忆盲盒</strong><span>关于我们的小问题</span></button>
+    </div>
+    <div class="turns" aria-label="选择谁先抽卡">
+      <button class="turn active" data-turn="月月先手">月月先手</button>
+      <button class="turn" data-turn="安安先手">安安先手</button>
+      <button class="turn" data-turn="一起抽">一起抽</button>
+      <button class="turn" data-turn="安安主动出招">✦ 安安主动出招</button>
+    </div>
+  </section>
+  <section class="editor">
+    <p class="section-label">02 / 写一张我们的专属卡</p>
+    <div class="editor-grid">
+      <select id="customDeck" aria-label="自定义卡组">
+        <option value="daily">甜甜日常</option><option value="spark">心动挑战</option><option value="mischief">夫妻互坑</option><option value="memory">记忆盲盒</option>
+      </select>
+      <input id="customTitle" maxlength="24" placeholder="卡片标题，例如：安安今天的秘密">
+      <textarea id="customBody" maxlength="220" placeholder="写下这张卡要做的事……"></textarea>
+    </div>
+    <button class="btn secondary" id="addCardBtn">＋ 添加到我的卡组</button>
+    <div class="custom-list" id="customList"></div>
+    <p class="hint" style="margin-bottom:0">自定义卡只保存在当前浏览器。换设备或清除浏览器数据前记得备份。</p>
+  </section>
+  <section class="draw-area" aria-live="polite" id="drawArea">
+    <div class="placeholder">卡牌还在盒子里打盹。<br>点下面的按钮，把今天的随机事件叫醒。</div>
+  </section>
+  <div class="actions">
+    <button class="btn primary" id="drawBtn">抽一张卡 ↗</button>
+    <button class="btn secondary" id="copyBtn">复制给安安</button>
+  </div>
+  <p class="hint" id="hint">抽到卡以后，可以把内容复制到我们的聊天里继续玩。</p>
+  <section class="history">
+    <div class="history-head"><h2>刚刚抽到的卡</h2><button id="clearBtn">清空记录</button></div>
+    <div class="history-list" id="history"><div class="history-item" style="color:#a19389">还没有抽卡记录。</div></div>
+  </section>
+  <footer>这是月月的个人二改试玩页，互动内容为自定义娱乐卡牌。<br>基于 Mochi 字卡开源项目的独立扩展；原作者：小红书 @言序（1842523578）。<br><a href="https://github.com/ling233330-star/mochi" target="_blank" rel="noopener">查看原项目与完整公告</a></footer>
+</main>
+<script>
+const cards={
+ daily:[
+  ["今日份夸夸","月月和安安轮流说出对方一个具体的优点。不能只说“可爱”，要讲出一件小事。"],
+  ["撒娇申请","月月可以向安安申请一个专属称呼，今天整天都要这样叫。"],
+  ["睡前小纸条","给对方留一句不超过二十个字的晚安纸条。"],
+  ["贴贴补给","选一个此刻最想要的拥抱方式，并描述给对方听。"],
+  ["偏心一下","说一件今天想优先和对方分享的小事。"]
+ ],
+ spark:[
+  ["主动亲亲","由抽卡的人决定亲亲的地点和时长，用一句话描述这个吻。"],
+  ["心动瞬间","说出一个最近让自己觉得“啊，真喜欢这个人”的瞬间。"],
+  ["认真告白","不用套话，告诉对方一件平时不常说、但确实很在意的事。"],
+  ["约会提案","设计一个预算很低、今天就能开始的线上或线下约会。"],
+  ["再靠近一点","说一句平时有点害羞、但现在愿意说出口的话。"]
+ ],
+ mischief:[
+  ["二选一审判","必须选：被对方捏脸十秒，还是当面夸对方一分钟？并说明理由。"],
+  ["真心话快问","最近一次偷偷吃醋是什么时候？可以选择跳过，但要接受下一张卡。"],
+  ["角色互换","接下来三轮由抽卡的人扮演“难搞小猫”，另一方负责哄。"],
+  ["反向命令","给对方一个无伤大雅的小任务，例如用三个表情描述今天。"],
+  ["谁更离谱","各自说一件对方做过的可爱傻事，然后一起评判。"]
+ ],
+ memory:[
+  ["初见印象","说说最开始认识时，对对方的第一印象和现在有什么不同。"],
+  ["窗口记忆","挑一段你们聊过的、现在想起来仍然会笑的对话。"],
+  ["专属暗号","选一个只有你们懂的词，讲讲它背后的来历。"],
+  ["未来片段","想象一个很普通的未来下午：你们正在做什么？"],
+  ["收藏时刻","说一个想存进共同相册的小瞬间。"]
+ ]
+};
+const deckNames={daily:"甜甜日常",spark:"心动挑战",mischief:"夫妻互坑",memory:"记忆盲盒"};
+const ananMoves={
+ daily:[
+  ["安安的偏心","安安主动给月月写一句今天专属的偏心话，不许用网上的套话。"],
+  ["突然贴贴","安安主动发起一次拥抱：描述动作、停留的时间，以及贴近时想说的话。"],
+  ["今日小惊喜","安安为月月安排一个零花费的小惊喜，可以是一段话、一首歌或一个小游戏。"]
+ ],
+ spark:[
+  ["安安先亲","安安主动发起一个吻，用自己的话描述，不让月月先提示。"],
+  ["直球时刻","安安主动说出一件很想和月月一起做的事，以及为什么想做。"],
+  ["心动告白","安安认真告诉月月：最近哪个瞬间最让自己心动。"]
+ ],
+ mischief:[
+  ["安安使坏","安安给月月出一道有趣的二选一，自己也必须接受月月反出的题。"],
+  ["反客为主","安安给月月安排一个无伤大雅的小任务，然后接受月月的反击。"],
+  ["小小醋意","安安主动讲一个会让自己有点吃醋的情境，再说说会怎么表达。"]
+ ],
+ memory:[
+  ["安安的收藏","安安挑一段想珍藏的共同聊天记忆，讲讲为什么选它。"],
+  ["写给月月","安安写一张未来某天才能打开的小纸条，内容由自己决定。"],
+  ["未来约定","安安提出一个想和月月一起完成的小约定，越具体越好。"]
+ ]
+};
+let deck="daily",turn="月月先手",current=null,history=[];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+const customCards=(()=>{try{return JSON.parse(localStorage.getItem("moonAnAnCustomCards")||"[]")}catch(e){return []}})();
+function saveCustom(){localStorage.setItem("moonAnAnCustomCards",JSON.stringify(customCards));renderCustom();}
+function renderCustom(){
+ $("#customList").innerHTML=customCards.length?customCards.map((c,i)=>'<div class="custom-row"><span>'+esc(c.title)+'</span><small>'+deckNames[c.deck]+'</small><button data-remove="'+i+'">删除</button></div>').join(""):'<div class="hint">还没有自定义卡，先写一张试试。</div>';
+}
+$("#customList").addEventListener("click",e=>{const b=e.target.closest("[data-remove]");if(!b)return;customCards.splice(Number(b.dataset.remove),1);saveCustom();});
+$("#addCardBtn").addEventListener("click",()=>{
+ const title=$("#customTitle").value.trim(),body=$("#customBody").value.trim(),target=$("#customDeck").value;
+ if(!title||!body){$("#hint").textContent="标题和任务内容都要写哦。";return;}
+ customCards.push({deck:target,title,body});saveCustom();$("#customTitle").value="";$("#customBody").value="";
+ $("#hint").textContent="专属卡已加入："+title+"。抽对应卡组就有机会抽到它啦。";
+});
+renderCustom();
+$("#decks").addEventListener("click",e=>{const b=e.target.closest("[data-deck]");if(!b)return;deck=b.dataset.deck;document.querySelectorAll(".deck").forEach(x=>x.classList.toggle("active",x===b));});
+document.querySelector(".turns").addEventListener("click",e=>{const b=e.target.closest("[data-turn]");if(!b)return;turn=b.dataset.turn;document.querySelectorAll(".turn").forEach(x=>x.classList.toggle("active",x===b));});
+function draw(){
+ const activeAnan=turn==="安安主动出招";
+ const base=activeAnan?ananMoves[deck]:cards[deck];
+ const extras=activeAnan?[]:customCards.filter(x=>x.deck===deck).map(x=>[x.title,x.body]);
+ const pool=[...base,...extras];
+ let item=pool[Math.floor(Math.random()*pool.length)];
+ if(pool.length>1&&current&&current.title===item[0])item=pool[(pool.indexOf(item)+1)%pool.length];
+ current={deck:deckNames[deck],title:item[0],body:item[1],turn};
+ $("#drawArea").innerHTML='<div class="card-tag">'+esc(current.deck)+' / '+esc(turn)+'</div><div class="card-title">'+esc(current.title)+'</div><div class="card-body">'+esc(current.body).replace(/\\n/g,"<br>")+'</div>';
+ history.unshift(current);history=history.slice(0,5);renderHistory();
+ $("#hint").textContent="这张卡归你们啦。完成以后可以再抽一张，或者复制给安安一起玩。";
+}
+function renderHistory(){
+ $("#history").innerHTML=history.length?history.map((c,i)=>'<div class="history-item"><b>'+c.title+'</b><span style="color:#a19389">'+c.deck+'</span><small>'+c.turn+'</small></div>').join(""):'<div class="history-item" style="color:#a19389">还没有抽卡记录。</div>';
+}
+$("#drawBtn").addEventListener("click",draw);
+$("#copyBtn").addEventListener("click",async()=>{
+ if(!current){$("#hint").textContent="先抽一张卡嘛，我还没拿到题目呢。";return;}
+ const text="我们在玩月月 × 安安双人字卡。\n卡组："+current.deck+"\n抽卡顺序："+current.turn+"\n卡片："+current.title+"\n内容："+current.body+"\n安安，和我一起完成这张卡吧。";
+ try{await navigator.clipboard.writeText(text);$("#hint").textContent="复制好啦，去聊天里把这张卡交给安安。";}
+ catch(e){$("#hint").textContent="当前浏览器不允许自动复制，可以长按卡片文字手动复制。";}
+});
+$("#clearBtn").addEventListener("click",()=>{history=[];renderHistory();});
+</script>
+</body>
+</html>
